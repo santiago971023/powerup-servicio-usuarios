@@ -33,5 +33,12 @@ sonar {
         property "sonar.externalIssuesReportPaths", "build/issues.json"
     }
 }
+allprojects {
+    apply plugin: 'java'
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
 
 apply from: './main.gradle'
