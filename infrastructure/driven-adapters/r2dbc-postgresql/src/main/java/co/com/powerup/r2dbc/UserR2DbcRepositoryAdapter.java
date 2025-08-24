@@ -12,32 +12,30 @@ import reactor.core.publisher.Mono;
 public class UserR2DbcRepositoryAdapter extends ReactiveAdapterOperations<User, UserEntity, Long, UserR2dbcRepository>
         implements UserRepository {
 
-    private final UserR2dbcRepository repository;
-    private final ObjectMapper mapper;
-
     public UserR2DbcRepositoryAdapter(UserR2dbcRepository repository, ObjectMapper mapper) {
-        super();
-        this.repository = repository;
-        this.mapper = mapper;
+        super(repository, mapper, userEntity -> mapper.map(userEntity, User.class));
+
     }
 
     @Override
     public Mono<User> findByEmail(String email) {
-        return null;
+        return repository.findByEmail(email).map(userEntity ->
+                mapper.map(userEntity, User.class));
     }
 
     @Override
     public Mono<User> findByIdCard(String idCard) {
-        return null;
+        return repository.findByIdCard(idCard).map(userEntity ->
+                mapper.map(userEntity, User.class));
     }
 
     @Override
     public Mono<Void> delete(Long id) {
-        return null;
+        return repository.deleteById(id);
     }
 
     @Override
     public Mono<User> update(User user) {
-        return null;
+        return this.save(user);
     }
 }
