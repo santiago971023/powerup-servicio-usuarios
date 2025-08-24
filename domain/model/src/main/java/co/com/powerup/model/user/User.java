@@ -1,4 +1,4 @@
-package co.com.powerup.model.usuario;
+package co.com.powerup.model.user;
 import co.com.powerup.model.role.Role;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
@@ -14,16 +14,16 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class Usuario {
+public class User {
     private Long id;
-    private String cedula;
-    private String nombre;
-    private String apellido;
-    private LocalDate fechaNacimiento;
-    private String direccion;
-    private String telefono;
+    private String idCard;
+    private String firstName;
+    private String lastName;
+    private LocalDate birthday;
+    private String address;
+    private String phone;
     private String email;
     private String password;
-    private BigDecimal salario;
+    private BigDecimal salary;
     private Role role;
 }
