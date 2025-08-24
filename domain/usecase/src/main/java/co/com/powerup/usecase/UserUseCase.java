@@ -1,28 +1,23 @@
-package co.com.powerup.usecase.usuario;
+package co.com.powerup.usecase;
 
 import co.com.powerup.model.exceptions.UserAlreadyExistsException;
 import co.com.powerup.model.exceptions.UserNotFoundException;
 import co.com.powerup.model.user.User;
-import co.com.powerup.model.user.gateways.UserGateway;
 import co.com.powerup.model.user.gateways.UserRepository;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.logging.Logger;
 
-
-public class UserUseCase implements UserGateway {
+@RequiredArgsConstructor
+public class UserUseCase {
 
     private final static Logger LOGGER = Logger.getLogger(UserUseCase.class.getName());
 
-    private final UserRepository userRepository; // Ya está inyectado por constructor
-
-    public UserUseCase(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserRepository userRepository;
 
 
-    @Override
     public Mono<User> saveUser(User user) {
         return userRepository.findByEmail(user.getEmail())
                 .flatMap(userExisting ->  {
@@ -36,27 +31,27 @@ public class UserUseCase implements UserGateway {
                 .cast(User.class);
     }
 
-    @Override
+
     public Mono<User> getUserByIdCard(String idCard) {
         return userRepository.findByEmail(idCard);
     }
 
-    @Override
+
     public Mono<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
-    @Override
+
     public Mono<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    @Override
+
     public Flux<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    @Override
+
     public Mono<User> updateUser(User user) {
         return userRepository.findById(user.getId())
                 .flatMap(userFound -> {
@@ -69,7 +64,7 @@ public class UserUseCase implements UserGateway {
                 }));
     }
 
-    @Override
+
     public Mono<Void> deleteUser(Long id) {
         return userRepository.findById(id)
                 .flatMap(userFound -> {
