@@ -2,6 +2,7 @@ package co.com.powerup.usecase;
 
 import co.com.powerup.model.exceptions.UserAlreadyExistsException;
 import co.com.powerup.model.exceptions.UserNotFoundException;
+import co.com.powerup.model.role.gateways.RoleRepository;
 import co.com.powerup.model.user.User;
 import co.com.powerup.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +17,26 @@ public class UserUseCase {
     private final static Logger LOGGER = Logger.getLogger(UserUseCase.class.getName());
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private static final String DEFAULT_ROLE_NAME = "SOLICITANTE";
 
 
     public Mono<User> saveUser(User user) {
         return userRepository.findByEmail(user.getEmail())
-                .flatMap(userExisting ->  {
-                    LOGGER.warning( "El usuario con el email '"+ user.getEmail() + "' ya existe.");
-                    return Mono.error(new UserAlreadyExistsException("El email " + user.getEmail() + " ya está registrado."));
+                .flatMap(userExisting -> {
+                    LOGGER.warning("El usuario con el email '" + user.getEmail() + "' ya existe.");
+                    return Mono.<User>error(new UserAlreadyExistsException("El email " + user.getEmail() + " ya está registrado."));
                 })
-                .switchIfEmpty(Mono.defer( () -> {
-                    LOGGER.info( "Guardando nuevo usuario con email: " + user.getEmail() );
-                    return userRepository.save(user);
-                }))
-                .cast(User.class);
+                .switchIfEmpty(Mono.defer(() -> {
+                    LOGGER.info("Guardando nuevo usuario con email: " + user.getEmail());
+                    return roleRepository.findByName(DEFAULT_ROLE_NAME)
+                            .switchIfEmpty(Mono.error(new RuntimeException("Rol por defecto no encontrado: " + DEFAULT_ROLE_NAME)))
+                            .flatMap(defaultRole -> {
+                                LOGGER.info("Asignando rol por defecto: " + defaultRole.toString());
+                                user.setRole(defaultRole);
+                                return userRepository.save(user);
+                            });
+                }));
     }
 
 

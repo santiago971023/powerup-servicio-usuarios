@@ -1,42 +1,51 @@
 package co.com.powerup.r2dbc.helper;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import co.com.powerup.model.role.Role;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Data
+@Entity
+@Table(name = "users")
+@Getter
+@Setter
 @NoArgsConstructor
-@Table(name = "usuarios")
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class UserEntity {
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre")
-    private String nombre;
+    @Column(name = "id_card", nullable = false, unique = true)
+    private String idCard;
 
-    @Column(name = "apellido")
-    private String apellido;
+    @Column(nullable = false)
+    private String name;
 
-    @Column(name = "fecha_nacimiento")
-    private LocalDate fechaNacimiento;
+    @Column( nullable = false)
+    private String lastname;
 
-    @Column(name = "correo_electronico")
-    private String correoElectronico;
+    private LocalDate birthday;
 
-    @Column(name = "password")
+    private String address;
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "salario_base")
-    private BigDecimal salarioBase;
+    @Column(precision = 15, scale = 2)
+    private BigDecimal salary;
 
-    @Column(name = "role_id")
+    @Column(name = "role_id") // Mapea a la columna de la clave foránea en tu tabla 'users'
     private Long roleId;
 }
 

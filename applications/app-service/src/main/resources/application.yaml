@@ -3,21 +3,18 @@ server:
 
 spring:
   application:
-    name: service-users
+    name: "service-users"
 
-  # --- CONFIGURACIÓN R2DBC (Reactiva) ---
+
+adapters:
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/crediya_users_db
-    username: user
-    password: password
+    host: "localhost"
+    port: 5432
+    database: "crediya_users_db"
+    schema: "public"
+    username: "user"
+    password: "password"
 
-  # --- CONFIGURACIÓN DE INICIALIZACIÓN DE SQL ---
-  sql:
-    init:
-      mode: always # Siempre ejecuta el script schema.sql al arrancar
-      schema-locations: classpath:schema.sql # Le dice dónde encontrar el script
 
-# --- LOGGING PARA VER LAS CONSULTAS SQL
-logging:
-  level:
-    org.springframework.r2dbc: DEBUG
+cors:
+  allowed-origins: '*'
