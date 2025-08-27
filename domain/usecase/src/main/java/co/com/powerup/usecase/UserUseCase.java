@@ -22,6 +22,7 @@ public class UserUseCase {
 
 
     public Mono<User> saveUser(User user) {
+        LOGGER.info("Empezando método saveUser del Caso de Uso.");
         return userRepository.findByEmail(user.getEmail())
                 .flatMap(userExisting -> {
                     LOGGER.warning("El usuario con el email '" + user.getEmail() + "' ya existe.");

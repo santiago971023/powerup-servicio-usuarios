@@ -66,7 +66,8 @@ public class UserHandler {
         if(violations.isEmpty()) {
             return Mono.just(dto);
         }
-        return Mono.error(new ConstraintDeclarationException((Throwable) violations));
+        log.warn("! VALIDACIÓN FALLIDA: Se encontraron {} violaciones en el DTO: {}", violations.size(), violations);
+        return Mono.error(new ConstraintViolationException(violations));
     }
 
     private Mono<ServerResponse> handleValidationException(ConstraintViolationException e ){

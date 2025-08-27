@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class UserRequestDto {
 
 
+    private String idCard;
     @NotBlank(message = "El campo 'name' no puede ser nulo o vacío.")
     @Pattern(regexp = "^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s\\p{Punct}]+$", message = "El campo 'name' solo debe contener letras y espacios.")
     @Size(min = 3, message = "El campo 'name' debe tener más de tres letras.")
@@ -41,6 +42,6 @@ public class UserRequestDto {
     @NotNull(message = "El salario base no puede ser nulo.")
     @DecimalMin(value = "0.0", inclusive = false, message = "El salario base debe ser mayor que cero.")
     @DecimalMax(value = "15000000.0", message = "El salario base no puede exceder los 15,000,000.")
-    private BigDecimal salarioBase;
+    private BigDecimal salary;
 
 }

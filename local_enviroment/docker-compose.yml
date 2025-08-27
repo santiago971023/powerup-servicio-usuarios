@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: "postgres:17"
+    container_name: "crediya-postgres-db"
+    restart: "always"
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_DB: "crediya_users_db"
+
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+    ports:
+      - "5432:5432"
+    networks:
+      - mynetwork
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: power-up-pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "9090:80"
+    networks:
+      - mynetwork
+
+
+volumes:
+  pgdata:
+
+networks:
+  mynetwork:
+    driver: bridge

@@ -5,6 +5,10 @@ spring:
   application:
     name: "service-users"
 
+data:
+  r2dbc:
+    repositories:
+      enabled: true
 
 adapters:
   r2dbc:
@@ -12,9 +16,14 @@ adapters:
     port: 5432
     database: "crediya_users_db"
     schema: "public"
-    username: "user"
-    password: "password"
-
+    username: "root"
+    password: "root"
 
 cors:
-  allowed-origins: '*'
+  allowed-origins: "*"
+
+
+logging:
+  level:
+    org.springframework.r2dbc.connection: DEBUG
+    io.r2dbc.postgresql: DEBUG

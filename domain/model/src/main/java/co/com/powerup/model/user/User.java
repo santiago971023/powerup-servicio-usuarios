@@ -17,8 +17,8 @@ import java.time.LocalDate;
 public class User {
     private Long id;
     private String idCard;
-    private String firstName;
-    private String lastName;
+    private String name;
+    private String lastname;
     private LocalDate birthday;
     private String address;
     private String phone;

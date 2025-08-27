@@ -1,14 +1,15 @@
 package co.com.powerup.r2dbc.helper;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.relational.core.mapping.Column;
 
 @Data
 @NoArgsConstructor
-@Table(name = "roles")
+@Table("roles")
 public class RoleEntity {
 
     @Id

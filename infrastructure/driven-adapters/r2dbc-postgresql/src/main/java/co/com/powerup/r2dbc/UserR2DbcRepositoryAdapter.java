@@ -5,15 +5,18 @@ import co.com.powerup.model.user.User;
 import co.com.powerup.model.user.gateways.UserRepository;
 import co.com.powerup.r2dbc.helper.ReactiveAdapterOperations;
 import co.com.powerup.r2dbc.helper.UserEntity;
+import co.com.powerup.usecase.UserUseCase;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.logging.Logger;
 
 @Repository
 public class UserR2DbcRepositoryAdapter extends ReactiveAdapterOperations<User, UserEntity, Long, UserR2dbcRepository>
         implements UserRepository {
 
+    private final static Logger LOGGER = Logger.getLogger(UserR2DbcRepositoryAdapter.class.getName());
     private final RoleRepository roleRepository;
 
     public UserR2DbcRepositoryAdapter(UserR2dbcRepository repository, ObjectMapper mapper, RoleRepository roleRepository) {
@@ -34,6 +37,7 @@ public class UserR2DbcRepositoryAdapter extends ReactiveAdapterOperations<User, 
     @Override
     @Transactional
     public Mono<User> save(User user) {
+        LOGGER.info("Saving user: " + user.toString() + " in DB");
         return super.save(user);
     }
 
