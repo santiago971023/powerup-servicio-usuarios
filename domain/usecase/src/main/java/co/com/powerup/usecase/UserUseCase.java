@@ -1,5 +1,7 @@
 package co.com.powerup.usecase;
 
+import co.com.powerup.model.exceptions.ErrorMessageBusiness;
+import co.com.powerup.model.exceptions.RoleNotFoundException;
 import co.com.powerup.model.exceptions.UserAlreadyExistsException;
 import co.com.powerup.model.exceptions.UserNotFoundException;
 import co.com.powerup.model.role.gateways.RoleRepository;
@@ -26,12 +28,12 @@ public class UserUseCase {
         return userRepository.findByEmail(user.getEmail())
                 .flatMap(userExisting -> {
                     LOGGER.warning("El usuario con el email '" + user.getEmail() + "' ya existe.");
-                    return Mono.<User>error(new UserAlreadyExistsException("El email " + user.getEmail() + " ya está registrado."));
+                    return Mono.<User>error(new UserAlreadyExistsException(ErrorMessageBusiness.USER_ALREADY_EXISTS_EXCEPTION.getMessage()));
                 })
                 .switchIfEmpty(Mono.defer(() -> {
                     LOGGER.info("Guardando nuevo usuario con email: " + user.getEmail());
                     return roleRepository.findByName(DEFAULT_ROLE_NAME)
-                            .switchIfEmpty(Mono.error(new RuntimeException("Rol por defecto no encontrado: " + DEFAULT_ROLE_NAME)))
+                            .switchIfEmpty(Mono.error(new RoleNotFoundException(ErrorMessageBusiness.ROLE_NOT_FOUND_EXCEPTION.getMessage())))
                             .flatMap(defaultRole -> {
                                 LOGGER.info("Asignando rol por defecto: " + defaultRole.toString());
                                 user.setRole(defaultRole);
