@@ -6,6 +6,7 @@ import co.com.powerup.model.exceptions.UserAlreadyExistsException;
 import co.com.powerup.model.exceptions.UserNotFoundException;
 import co.com.powerup.model.role.gateways.RoleRepository;
 import co.com.powerup.model.user.User;
+import co.com.powerup.model.user.gateways.PasswordEncoderServicePort;
 import co.com.powerup.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -20,6 +21,7 @@ public class UserUseCase {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoderServicePort encoderPort;
     private static final String DEFAULT_ROLE_NAME = "SOLICITANTE";
 
 
@@ -35,6 +37,10 @@ public class UserUseCase {
                     return roleRepository.findByName(DEFAULT_ROLE_NAME)
                             .switchIfEmpty(Mono.error(new RoleNotFoundException(ErrorMessageBusiness.ROLE_NOT_FOUND_EXCEPTION.getMessage())))
                             .flatMap(defaultRole -> {
+                                LOGGER.info("Encriptando contraseña.");
+                                String encoderPassword = encoderPort.encode(user.getPassword());
+                                LOGGER.info("Asignando contraseña encriptada.");
+                                user.setPassword(encoderPassword);
                                 LOGGER.info("Asignando rol por defecto: " + defaultRole.toString());
                                 user.setRole(defaultRole);
                                 return userRepository.save(user);
