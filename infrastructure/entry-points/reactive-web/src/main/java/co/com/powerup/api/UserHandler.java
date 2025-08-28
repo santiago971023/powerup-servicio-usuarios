@@ -37,26 +37,22 @@ public class UserHandler {
 
 
     public Mono<ServerResponse> saveUser(ServerRequest serverRequest) {
+
         log.info("== == Inicio de petición recibida para guarduar un usuario (solicitante). == ==");
+
         return serverRequest.bodyToMono(UserRequestDto.class)
                 .doOnNext(dto -> log.debug("Dto extraído del cuerpo de la petición {}", dto))
                 .flatMap(this::validateRequestDto)
-                .flatMap(userRequestDto -> {
-                    log.debug("Mapeando UserRequestDto a objet de dominio.");
-                    User user = userDtoMapper.toDomain(userRequestDto);
-                    log.info("Llamando a UserUseCase para guardar el usuario con el email.", user.getEmail());
-                    return userUseCase.saveUser(user);
-                })
+                .map(userDtoMapper::toDomain)
+                .flatMap(userUseCase::saveUser)
                 .flatMap(savedUser -> {
-                    log.info("UserUseCase completado, usuario guardado");
                     UserResponseDto responseDto = userDtoMapper.toResponseDto(savedUser);
-                    log.debug("Mapeando User a UserDResponseDto.");
-                    return ServerResponse.status(HttpStatus.CREATED)
-                            .bodyValue(responseDto);
-                })
-                .doOnSuccess(response -> log.info(" == == Fin. Petición procesada, se devuelve respuesta 201. "))
-                .onErrorResume(ConstraintViolationException.class, this::handleValidationException)
-                .onErrorResume(UserAlreadyExistsException.class, this::handleBusinessException);
+                    log.info("<== FIN: Usuario creado con éxito con ID: {}", savedUser.getId());
+                    return ServerResponse.status(HttpStatus.CREATED).bodyValue(responseDto);
+                });
+
+
+
     }
 
 
