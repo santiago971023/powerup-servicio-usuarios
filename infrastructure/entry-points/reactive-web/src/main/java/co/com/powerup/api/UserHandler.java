@@ -56,7 +56,7 @@ public class UserHandler {
     }
 
 
-    // Metodo privados
+    // Metodo privados  CLASE APARTE
     private Mono<UserRequestDto> validateRequestDto(UserRequestDto dto) {
         Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(dto);
         if(violations.isEmpty()) {

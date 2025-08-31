@@ -22,6 +22,16 @@ adapters:
 cors:
   allowed-origins: "*"
 
+springdoc:
+  packages-to-scan: co.com.powerup.api
+  paths-to-match: /api/v1/**
+  webflux:
+    core:
+      fn:
+        enabled: true
+  api-docs:
+    enabled: true
+  show-actuator: true
 
 logging:
   level:
