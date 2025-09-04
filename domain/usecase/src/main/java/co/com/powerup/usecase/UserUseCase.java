@@ -50,7 +50,8 @@ public class UserUseCase {
 
 
     public Mono<User> getUserByIdCard(String idCard) {
-        return userRepository.findByEmail(idCard);
+        return userRepository.findByIdCard(idCard)
+                .switchIfEmpty(Mono.error(new UserNotFoundException(ErrorMessageBusiness.USER_NOT_FOUND_EXCEPTION.getMessage())));
     }
 
 
