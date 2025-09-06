@@ -69,6 +69,11 @@ public class UserR2DbcRepositoryAdapter extends ReactiveAdapterOperations<User, 
         return this.save(user);
     }
 
+    @Override
+    public Mono<Boolean> existsByEmail(String email) {
+        return repository.existsByEmail(email);
+    }
+
 
     // privados
     private Mono<User> mapEntityWithRole(UserEntity userEntity) {
