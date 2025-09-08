@@ -1,3 +1,21 @@
+
+plugins {
+    id 'jacoco'
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        csv.required = false
+        html.required = true
+    }
+}
+
 dependencies {
     implementation project(':usecase')
     implementation project(':model')
@@ -13,4 +31,7 @@ dependencies {
     testImplementation 'org.reactivecommons.utils:object-mapper:0.1.0'
     implementation("org.mapstruct:mapstruct:1.6.3")
 }
+
+
+
 

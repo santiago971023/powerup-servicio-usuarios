@@ -40,7 +40,7 @@ public class UserUseCaseTest {
         User savedUser = User.builder().id(1L).email("test@test.com").password("encodedPassword").build();
 
 
-        when(userRepository.findByEmail(any(String.class))).thenReturn(Mono.empty());
+        when(userRepository.existsByEmail(any(String.class))).thenReturn(Mono.just(false));
         when(roleRepository.findByName("SOLICITANTE")).thenReturn(Mono.just(roleSolicitante));
         when(passwordEncoderServicePort.encode(userWithoutRole.getPassword())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(Mono.just(savedUser));
@@ -61,7 +61,7 @@ public class UserUseCaseTest {
         // GIVEN
         User savedUser = User.builder().id(1L).email("test@test.com").password("encodedPassword").build(); // usuario ya existente
 
-        when(userRepository.findByEmail(any(String.class))).thenReturn(Mono.just(savedUser));
+        when(userRepository.existsByEmail(any(String.class))).thenReturn(Mono.just(true));
 
         // WHEN
         Mono<User> result = userUseCase.saveUser(savedUser);

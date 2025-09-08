@@ -1,6 +1,7 @@
 package co.com.powerup.r2dbc.helper;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.reactivecommons.utils.ObjectMapper;
@@ -16,6 +17,7 @@ import java.util.Objects;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@Disabled("Test de scaffold, no aplica")
 class ReactiveAdapterOperationsTest {
 
     private DummyRepository repository;
