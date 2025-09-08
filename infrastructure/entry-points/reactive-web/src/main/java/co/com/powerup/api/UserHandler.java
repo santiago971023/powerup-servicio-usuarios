@@ -1,10 +1,14 @@
 package co.com.powerup.api;
 
+import co.com.powerup.api.dto.LoginRequestDto;
+import co.com.powerup.api.dto.LoginResponseDto;
 import co.com.powerup.api.dto.UserRequestDto;
 import co.com.powerup.api.dto.UserResponseDto;
+import co.com.powerup.api.mapper.ILoginDtoMapper;
 import co.com.powerup.api.mapper.IUserDtoMapper;
 import co.com.powerup.model.exceptions.UserAlreadyExistsException;
 import co.com.powerup.model.user.User;
+import co.com.powerup.usecase.LoginUseCase;
 import co.com.powerup.usecase.UserUseCase;
 import jakarta.validation.ConstraintDeclarationException;
 import jakarta.validation.ConstraintViolation;
@@ -29,11 +33,15 @@ public class UserHandler {
     private final UserUseCase userUseCase;
     private final IUserDtoMapper userDtoMapper;
     private final Validator validator;
+    private final ILoginDtoMapper loginDtoMapper;
+    private final LoginUseCase loginUseCase;
 
-    public UserHandler(UserUseCase userUseCase, IUserDtoMapper userDtoMapper, Validator validator) {
+    public UserHandler(UserUseCase userUseCase, IUserDtoMapper userDtoMapper, Validator validator, ILoginDtoMapper loginDtoMapper, LoginUseCase loginUseCase) {
         this.userUseCase = userUseCase;
         this.userDtoMapper = userDtoMapper;
         this.validator = validator;
+        this.loginDtoMapper = loginDtoMapper;
+        this.loginUseCase = loginUseCase;
     }
 
 
@@ -43,13 +51,27 @@ public class UserHandler {
 
         return serverRequest.bodyToMono(UserRequestDto.class)
                 .doOnNext(dto -> log.debug("Dto extraído del cuerpo de la petición {}", dto))
-                .flatMap(this::validateRequestDto)
+                .flatMap(this::validateUserRequestDto)
                 .map(userDtoMapper::toDomain)
                 .flatMap(userUseCase::saveUser)
                 .flatMap(savedUser -> {
                     UserResponseDto responseDto = userDtoMapper.toResponseDto(savedUser);
                     log.info("<== FIN: Usuario creado con éxito con ID: {}", savedUser.getId());
                     return ServerResponse.status(HttpStatus.CREATED).bodyValue(responseDto);
+                });
+    }
+
+    public Mono<ServerResponse> loginUser(ServerRequest request) {
+        log.info(" == == Petición recibida para Login == ==");
+        return request.bodyToMono(LoginRequestDto.class)
+                .doOnNext(dto -> log.debug("Dto extraído del cuerpo de la petición {}", dto))
+                .flatMap(this::validateLoginRequestDto)
+                .map(loginDtoMapper::toInput)
+                .flatMap(loginUseCase::login)
+                .flatMap(loginAproved -> {
+                    LoginResponseDto loginResponseDto = new LoginResponseDto(loginAproved);
+                    log.info("¡Login ejecutado con éxito!");
+                    return ServerResponse.status(HttpStatus.OK).bodyValue(loginResponseDto);
                 });
     }
 
@@ -70,8 +92,16 @@ public class UserHandler {
 
 
     // Metodo privados  CLASE APARTE
-    private Mono<UserRequestDto> validateRequestDto(UserRequestDto dto) {
+    private Mono<UserRequestDto> validateUserRequestDto(UserRequestDto dto) {
         Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(dto);
+        if(violations.isEmpty()) {
+            return Mono.just(dto);
+        }
+        log.warn("! VALIDACIÓN FALLIDA: Se encontraron {} violaciones en el DTO: {}", violations.size(), violations);
+        return Mono.error(new ConstraintViolationException(violations));
+    }
+    private Mono<LoginRequestDto> validateLoginRequestDto(LoginRequestDto dto) {
+        Set<ConstraintViolation<LoginRequestDto>> violations = validator.validate(dto);
         if(violations.isEmpty()) {
             return Mono.just(dto);
         }
