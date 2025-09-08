@@ -64,7 +64,11 @@ public class RouterRest {
         return route(
                 POST("/api/v1/users").and(accept(MediaType.APPLICATION_JSON)),
                 userHandler::saveUser
-        );
+        )
+                .andRoute(
+                        GET("/api/v1/users/document/{idCard}"),
+                        userHandler::getUserByIdCard
+                );
     }
 
 }

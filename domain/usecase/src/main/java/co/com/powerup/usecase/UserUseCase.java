@@ -27,10 +27,13 @@ public class UserUseCase {
 
     public Mono<User> saveUser(User user) {
         LOGGER.info("Empezando método saveUser del Caso de Uso.");
-        return userRepository.findByEmail(user.getEmail()) // Consultar mejor a un existByEmail que retorne un booleano
-                .flatMap(userExisting -> {
-                    LOGGER.warning("El usuario con el email '" + user.getEmail() + "' ya existe.");
-                    return Mono.<User>error(new UserAlreadyExistsException(ErrorMessageBusiness.USER_ALREADY_EXISTS_EXCEPTION.getMessage()));
+        return userRepository.existsByEmail(user.getEmail())
+                .flatMap(exists -> {
+                    if(exists) {
+                        LOGGER.warning("El usuario con el email '" + user.getEmail() + "' ya existe.");
+                        return Mono.<User>error(new UserAlreadyExistsException(ErrorMessageBusiness.USER_ALREADY_EXISTS_EXCEPTION.getMessage()));
+                    }
+                    return Mono.empty();
                 })
                 .switchIfEmpty(Mono.defer(() -> {
                     LOGGER.info("Guardando nuevo usuario con email: " + user.getEmail());
@@ -50,7 +53,8 @@ public class UserUseCase {
 
 
     public Mono<User> getUserByIdCard(String idCard) {
-        return userRepository.findByEmail(idCard);
+        return userRepository.findByIdCard(idCard)
+                .switchIfEmpty(Mono.error(new UserNotFoundException(ErrorMessageBusiness.USER_NOT_FOUND_EXCEPTION.getMessage())));
     }
 
 

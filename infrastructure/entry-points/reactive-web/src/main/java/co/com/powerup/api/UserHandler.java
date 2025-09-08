@@ -12,6 +12,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -50,9 +51,21 @@ public class UserHandler {
                     log.info("<== FIN: Usuario creado con éxito con ID: {}", savedUser.getId());
                     return ServerResponse.status(HttpStatus.CREATED).bodyValue(responseDto);
                 });
+    }
 
+    public Mono<ServerResponse> getUserByIdCard(ServerRequest serverRequest) {
+        String idCard = serverRequest.pathVariable("idCard");
+        log.info("==> Petición recibida para buscar usuario por idCard: {}", idCard);
 
+        return userUseCase.getUserByIdCard(idCard)
+                .flatMap(user -> {
+                    UserResponseDto responseDto = userDtoMapper.toResponseDto(user);
+                    log.info("<== FIN: Usuario encontrado. Devolviendo respuesta 200 OK.");
+                    return ServerResponse.ok()
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(responseDto);
 
+                });
     }
 
 
