@@ -37,3 +37,9 @@ logging:
   level:
     org.springframework.r2dbc.connection: DEBUG
     io.r2dbc.postgresql: DEBUG
+
+
+# --- CONFIGURACIÓN DE JWT ---
+jwt:
+  secret: "5a03a07570d193be834aa469e77e3bd3e7c469d2b148c44f85598601638aa8119da0d5abfb4d9a009b86befa2de7320d14ef96b35154f4f40d5fea1ffc97f263"
+  expiration: 3600000
