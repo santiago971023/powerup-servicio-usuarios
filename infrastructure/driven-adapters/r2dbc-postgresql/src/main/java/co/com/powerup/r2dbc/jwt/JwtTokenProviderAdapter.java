@@ -1,7 +1,9 @@
 package co.com.powerup.r2dbc.jwt;
 
+import co.com.powerup.model.token.TokenClaims;
 import co.com.powerup.model.token.TokenProvider;
 import co.com.powerup.model.user.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -38,7 +40,7 @@ public class JwtTokenProviderAdapter implements TokenProvider {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
         claims.put("email", user.getEmail());
-        claims.put("role", user.getRole());
+        claims.put("role", user.getRole().getName());
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -47,5 +49,30 @@ public class JwtTokenProviderAdapter implements TokenProvider {
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    @Override
+    public boolean validateToken(String token) {
+        try{
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
+
+    @Override
+    public TokenClaims getAllClaimsFromToken(String token) {
+        Claims libraryClaims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return TokenClaims.builder()
+                .userId(libraryClaims.get("userId", Long.class))
+                .email(libraryClaims.getSubject())
+                .role(libraryClaims.get("role", String.class))
+                .build();
     }
 }
