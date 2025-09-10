@@ -57,44 +57,44 @@ public class UserUseCase {
                 .switchIfEmpty(Mono.error(new UserNotFoundException(ErrorMessageBusiness.USER_NOT_FOUND_EXCEPTION.getMessage())));
     }
 
-
-    public Mono<User> getUserById(Long id) {
-        return userRepository.findById(id);
-    }
-
-
-    public Mono<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-
-    public Flux<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-
-    public Mono<User> updateUser(User user) {
-        return userRepository.findById(user.getId())
-                .flatMap(userFound -> {
-                    LOGGER.info("Usuario encontrado, se procede a actualizar.");
-                    return userRepository.save(user);
-                })
-                .switchIfEmpty(Mono.defer( () -> {
-                    LOGGER.warning("Intento de actualización fallido porque no se encuentra usuario con el id: " + user.getId());
-                    return Mono.error(new UserNotFoundException("No se puede actualizar. Usuario con ID " + user.getId() + " no fue encontrado."));
-                }));
-    }
+//
+//    public Mono<User> getUserById(Long id) {
+//        return userRepository.findById(id);
+//    }
+//
+//
+//    public Mono<User> getUserByEmail(String email) {
+//        return userRepository.findByEmail(email);
+//    }
+//
+//
+//    public Flux<User> getAllUsers() {
+//        return userRepository.findAll();
+//    }
 
 
-    public Mono<Void> deleteUser(Long id) {
-        return userRepository.findById(id)
-                .flatMap(userFound -> {
-                    LOGGER.info("Usuario encontrado, se procede a eliminar.");
-                    return userRepository.delete(id);
-                })
-                .switchIfEmpty(Mono.defer( () -> {
-                    LOGGER.warning("Está intentando eiminar un usuario no existente.");
-                    return Mono.error(new UserNotFoundException("No se puede eliminar. Usuario con ID: " + id + " no fue encontrado."));
-                }));
-    }
+//    public Mono<User> updateUser(User user) {
+//        return userRepository.findById(user.getId())
+//                .flatMap(userFound -> {
+//                    LOGGER.info("Usuario encontrado, se procede a actualizar.");
+//                    return userRepository.save(user);
+//                })
+//                .switchIfEmpty(Mono.defer( () -> {
+//                    LOGGER.warning("Intento de actualización fallido porque no se encuentra usuario con el id: " + user.getId());
+//                    return Mono.error(new UserNotFoundException("No se puede actualizar. Usuario con ID " + user.getId() + " no fue encontrado."));
+//                }));
+//    }
+
+
+//    public Mono<Void> deleteUser(Long id) {
+//        return userRepository.findById(id)
+//                .flatMap(userFound -> {
+//                    LOGGER.info("Usuario encontrado, se procede a eliminar.");
+//                    return userRepository.delete(id);
+//                })
+//                .switchIfEmpty(Mono.defer( () -> {
+//                    LOGGER.warning("Está intentando eiminar un usuario no existente.");
+//                    return Mono.error(new UserNotFoundException("No se puede eliminar. Usuario con ID: " + id + " no fue encontrado."));
+//                }));
+//    }
 }
