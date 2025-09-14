@@ -27,6 +27,9 @@ public class UserUseCase {
 
     public Mono<User> saveUser(User user) {
         LOGGER.info("Empezando método saveUser del Caso de Uso.");
+
+        String targetRole = (user.getRole() == null) ? DEFAULT_ROLE_NAME : user.getRole().getName();
+
         return userRepository.existsByEmail(user.getEmail())
                 .flatMap(exists -> {
                     if(exists) {
@@ -37,15 +40,15 @@ public class UserUseCase {
                 })
                 .switchIfEmpty(Mono.defer(() -> {
                     LOGGER.info("Guardando nuevo usuario con email: " + user.getEmail());
-                    return roleRepository.findByName(DEFAULT_ROLE_NAME)
+                    return roleRepository.findByName(targetRole)
                             .switchIfEmpty(Mono.error(new RoleNotFoundException(ErrorMessageBusiness.ROLE_NOT_FOUND_EXCEPTION.getMessage())))
-                            .flatMap(defaultRole -> {
+                            .flatMap(role -> {
                                 LOGGER.info("Encriptando contraseña.");
                                 String encoderPassword = encoderPort.encode(user.getPassword());
                                 LOGGER.info("Asignando contraseña encriptada.");
                                 user.setPassword(encoderPassword);
-                                LOGGER.info("Asignando rol por defecto: " + defaultRole.toString());
-                                user.setRole(defaultRole);
+                                LOGGER.info("Asignando rol: " + role.getName());
+                                user.setRole(role);
                                 return userRepository.save(user);
                             });
                 }));
