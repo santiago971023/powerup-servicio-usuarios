@@ -53,6 +53,7 @@ public class UserUseCase {
 
 
     public Mono<User> getUserByIdCard(String idCard) {
+        LOGGER.info("== == Se inicia método por llamado de microservice-loan == ==");
         return userRepository.findByIdCard(idCard)
                 .switchIfEmpty(Mono.error(new UserNotFoundException(ErrorMessageBusiness.USER_NOT_FOUND_EXCEPTION.getMessage())));
     }
