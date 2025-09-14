@@ -33,9 +33,19 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
+
                 .authorizeExchange(exchanges -> exchanges
                         // Rutas públicas
                         .pathMatchers("/api/v1/login").permitAll()
+                        .pathMatchers("/api/v1/users/document/**").permitAll()
+                        .pathMatchers(
+                                "/swagger-ui.html",       // algunas versiones lo exponen así
+                                "/swagger-ui/**",         // incluye index.html, css, js
+                                "/v3/api-docs/**",        // JSON con la specp
+                                "/v3/api-docs.yaml",      // YAML con la spec
+                                "/webjars/**"             // necesario si swagger carga recursos desde webjars
+                        ).permitAll()
+
 
                         // Rutas protegidas por rol
                         .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyAuthority("ADMINISTRADOR")
@@ -43,10 +53,13 @@ public class SecurityConfig {
                         // Cualquier otra ruta, authentication.
                         .anyExchange().authenticated()
                 )
+
                 .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(authenticationEntryPoint())
                         .accessDeniedHandler(accessDeniedHandler()))
+
+
                 .build();
     }
 
