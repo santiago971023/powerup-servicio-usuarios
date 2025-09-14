@@ -57,4 +57,9 @@ public class UserRequestDto {
     @DecimalMax(value = "15000000.0", message = "El salario base no puede exceder los 15,000,000.")
     private BigDecimal salary;
 
+
+    @Schema(description = "El campo 'role' debe ser 'ASESOR', o por el contrario un valor nulo para 'SOLICITANTE'.", example = "'ASESOR'")
+    private String role;
+
+
 }
