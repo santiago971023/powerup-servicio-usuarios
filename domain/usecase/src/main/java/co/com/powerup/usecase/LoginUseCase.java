@@ -6,10 +6,12 @@ import co.com.powerup.model.user.gateways.PasswordEncoderServicePort;
 import co.com.powerup.model.user.gateways.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 import java.util.logging.Logger;
 
+@RequiredArgsConstructor
 public class LoginUseCase {
 
     private final static Logger LOGGER = Logger.getLogger(LoginUseCase.class.getName());
@@ -17,6 +19,7 @@ public class LoginUseCase {
     private UserRepository userRepository;
     private PasswordEncoderServicePort passwordEncoder;
     private TokenProvider tokenProvider;
+
 
     public LoginUseCase(UserRepository userRepository, PasswordEncoderServicePort passwordEncoder, TokenProvider tokenProvider) {
         this.userRepository = userRepository;
