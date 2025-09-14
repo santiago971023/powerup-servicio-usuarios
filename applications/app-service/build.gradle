@@ -11,6 +11,7 @@ dependencies {
     testImplementation 'com.tngtech.archunit:archunit:1.4.1'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation("org.mapstruct:mapstruct:1.6.3")
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
 }
 
@@ -28,3 +29,4 @@ bootJar {
     // Sets output jar name
     archiveFileName = "${project.getParent().getName()}.${archiveExtension.get()}"
 }
+

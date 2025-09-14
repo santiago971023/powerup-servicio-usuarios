@@ -3,6 +3,7 @@ package co.com.powerup.api.config;
 import co.com.powerup.api.dto.ErrorDetailDto;
 import co.com.powerup.api.dto.ErrorResponseDto;
 import co.com.powerup.model.exceptions.BusinessException;
+import co.com.powerup.model.exceptions.InvalidCredentialsException;
 import co.com.powerup.model.exceptions.UserAlreadyExistsException;
 import co.com.powerup.model.exceptions.UserNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -41,6 +42,7 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                 ConstraintViolationException.class, this::handleValidationException,
                 UserAlreadyExistsException.class, this::handleUserAlreadyExist,
                 UserNotFoundException.class, this::handleUserNotFound,
+                InvalidCredentialsException.class, this::handleInvalidCredentials,
                 BusinessException.class, this::handleGenericError
         );
         this.setMessageWriters(configurer.getWriters());
@@ -121,6 +123,24 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
         List<ErrorDetailDto> errorDetails = List.of(new ErrorDetailDto("userNotFound", error.getMessage()));
 
         log.warn("Usuario no encontrado. {}: {}", request.path(), error.getMessage());
+
+        ErrorResponseDto finalResponse = ErrorResponseDto.builder()
+                .errors(errorDetails)
+                .message(message)
+                .code(errorCode)
+                .build();
+
+        return ServerResponse.status(status).bodyValue(finalResponse);
+    }
+
+    private Mono<ServerResponse> handleInvalidCredentials(Throwable error, ServerRequest request) {
+
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        String message = "Credenciales invalidas.";
+        String errorCode = "401_01";
+        List<ErrorDetailDto> errorDetails = List.of(new ErrorDetailDto("credenciales", error.getMessage()));
+
+        log.warn("Error de credenciales en la petición {}: {}", request.path(), error.getMessage());
 
         ErrorResponseDto finalResponse = ErrorResponseDto.builder()
                 .errors(errorDetails)

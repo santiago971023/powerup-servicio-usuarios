@@ -68,7 +68,12 @@ public class RouterRest {
                 .andRoute(
                         GET("/api/v1/users/document/{idCard}"),
                         userHandler::getUserByIdCard
-                );
+                )
+                .andRoute(
+                    POST("/api/v1/login").and(accept(MediaType.APPLICATION_JSON)),
+                    userHandler::loginUser
+
+        );
     }
 
 }
