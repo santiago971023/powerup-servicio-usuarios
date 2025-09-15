@@ -61,10 +61,12 @@ public class UserUseCase {
                 .switchIfEmpty(Mono.error(new UserNotFoundException(ErrorMessageBusiness.USER_NOT_FOUND_EXCEPTION.getMessage())));
     }
 
-//
-//    public Mono<User> getUserById(Long id) {
-//        return userRepository.findById(id);
-//    }
+
+    public Mono<User> getUserById(Long id) {
+        LOGGER.info("== == Se inicia método por llamado de microservice-loan == ==");
+        return userRepository.findById(id)
+                .switchIfEmpty(Mono.error(new UserNotFoundException(ErrorMessageBusiness.USER_NOT_FOUND_EXCEPTION.getMessage())));
+    }
 //
 //
 //    public Mono<User> getUserByEmail(String email) {
