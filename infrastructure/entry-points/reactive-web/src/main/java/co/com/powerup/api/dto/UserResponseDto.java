@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Builder
 @Data
 @NoArgsConstructor
@@ -21,5 +23,7 @@ public class UserResponseDto {
     private String lastname;
     @Schema(description = "Email del usuario", example = "juanito@example.com")
     private String email;
+
+    private BigDecimal salary;
 
 }
