@@ -90,6 +90,21 @@ public class UserHandler {
                 });
     }
 
+    public Mono<ServerResponse> getUserById(ServerRequest serverRequest) {
+        Long id = Long.valueOf(serverRequest.pathVariable("id"));
+        log.info("==> Petición recibida para buscar usuario por id: {}", id);
+
+        return userUseCase.getUserById(id)
+                .flatMap(user -> {
+                    UserResponseDto responseDto = userDtoMapper.toResponseDto(user);
+                    log.info("=== SALARIO ===" + responseDto.toString());
+                    log.info("<== FIN: Usuario encontrado. Devolviendo respuesta 200 OK.");
+                    return ServerResponse.ok()
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(responseDto);
+                });
+    }
+
 
     // Metodo privados  CLASE APARTE
     private Mono<UserRequestDto> validateUserRequestDto(UserRequestDto dto) {
