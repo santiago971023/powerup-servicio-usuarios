@@ -38,6 +38,7 @@ public class SecurityConfig {
                         // Rutas públicas
                         .pathMatchers("/api/v1/login").permitAll()
                         .pathMatchers("/api/v1/users/document/**").permitAll()
+                        .pathMatchers("/api/v1/users/id/**").permitAll()
                         .pathMatchers(
                                 "/swagger-ui.html",       // algunas versiones lo exponen así
                                 "/swagger-ui/**",         // incluye index.html, css, js
@@ -48,7 +49,7 @@ public class SecurityConfig {
 
 
                         // Rutas protegidas por rol
-                        .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyAuthority("ADMINISTRADOR")
+                        .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyAuthority("ADMINISTRADOR", "ASESOR")
 
                         // Cualquier otra ruta, authentication.
                         .anyExchange().authenticated()
